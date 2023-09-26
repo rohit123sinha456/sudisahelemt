@@ -1,0 +1,3 @@
+models:
+  tracker: "osnet_x0_25_msmt17.pt"
+  detection: "model4_22.9"
