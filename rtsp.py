@@ -19,6 +19,9 @@ class RTSP():
         self.framequeue = queue.Queue()
         self.MaxCorruptFrameDuration = 30
         self.cap = None
+    
+        # Configure logging
+        logging.basicConfig(filename='testlog.log', level=logging.INFO, format='%(asctime)s [%(levelname)s]: %(message)s')
         
     # def setup_connection(self):
         Retry = 0
@@ -85,6 +88,7 @@ class RTSP():
                 Frame = self.framequeue.get()
                 if Frame is not None:
                     dets = self.inferob.detection(Frame)
+                    logging.info("Frame Detection Done")
                     frames = self.inferob.tracking(Frame,dets)
                     i = uuid.uuid4()
                     fnmae = "frame" + str(i) + '.jpg'
@@ -93,8 +97,9 @@ class RTSP():
                     
                     if(frames is not None):
                         cv2.imwrite(frame_name,frames)
+                        logging.info("Frame Saved")
                         self.api.posting(fnmae,self.camera_config)
-                        print("Frame posting done")
+                        logging.info("Frame Posted")
 
             except:
                 print("Error in getting and running AI model")
