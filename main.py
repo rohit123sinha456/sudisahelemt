@@ -6,7 +6,7 @@ import os
 if __name__=="__main__":
     inferob = Infer()
     api = API()
-    cap = cv2.VideoCapture('v10.mp4')
+    cap = cv2.VideoCapture('v2.mp4')
     i = 0
     while cap.isOpened():
         ret, Frame = cap.read()

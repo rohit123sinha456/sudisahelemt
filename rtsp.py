@@ -9,10 +9,11 @@ import uuid
 
 
 class RTSP():
-    def __init__(self,Inference,API,RTSP_URL,MaxRetries=3):
+    def __init__(self,Inference,API,camera_config,MaxRetries=3):
         self.inferob = Inference
         self.api = API
-        self.rtsp_url = RTSP_URL
+        self.camera_config = camera_config
+        self.rtsp_url = camera_config['rtsp_url']
         self.maxretries = MaxRetries
         self.retryinterval = 30
         self.framequeue = queue.Queue()
@@ -92,7 +93,7 @@ class RTSP():
                     
                     if(frames is not None):
                         cv2.imwrite(frame_name,frames)
-                        self.api.posting(fnmae)
+                        self.api.posting(fnmae,self.camera_config)
                         print("Frame posting done")
 
             except:
@@ -101,7 +102,7 @@ class RTSP():
     def run_threads(self):
         QueueThread = threading.Thread(target=self.enqueue_frame_buffer)
         DequeueThread = threading.Thread(target=self.dequeue_frame_buffer)
-        # DequeueThread.daemon = True
+        DequeueThread.daemon = True
         QueueThread.daemon = True
         QueueThread.start()
         DequeueThread.start()

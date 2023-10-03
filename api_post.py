@@ -9,7 +9,7 @@ class API:
         self.save_url = self.config['url']['save']
         self.image_folder = self.config['output']['folder']
 
-    def posting(self,filename):
+    def posting(self,filename,camera_config):
         imgencode = ""
         x = ""
         print("reading filename",filename)
@@ -18,9 +18,9 @@ class API:
             x = requests.post(self.url, files= {"image": img_file})
             try:
                 serverfilepath = x.json()['data']['fileName']
-                msgbody = {"dept_name": "Manufacturing",
-                           "camera": "Camera 10",
-                           "alarm_type": "Warning",
+                msgbody = {"dept_name": camera_config['dept_name'],
+                           "camera": camera_config['camera'],
+                           "alarm_type": camera_config['alarm_type'],
                            "image": serverfilepath}
                 x = requests.post(self.save_url, json=msgbody)
                 print(x.content)
