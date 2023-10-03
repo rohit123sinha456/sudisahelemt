@@ -48,12 +48,15 @@ class Infer:
         return detection
     
     def tracking(self,Frame,detection):
-        tracks = self.tracker.update(np.array(detection), Frame) # --> (x, y, x, y, id, conf, cls, ind)
-        
-        xyxys = tracks[:, 0:4].astype('int') # float64 to int
-        ids = tracks[:, 4].astype('int') # float64 to int
-        confs = tracks[:, 5]
-        clss = tracks[:, 6].astype('int') # float64 to int
+        try:
+            tracks = self.tracker.update(np.array(detection), Frame) # --> (x, y, x, y, id, conf, cls, ind)
+            
+            xyxys = tracks[:, 0:4].astype('int') # float64 to int
+            ids = tracks[:, 4].astype('int') # float64 to int
+            confs = tracks[:, 5]
+            clss = tracks[:, 6].astype('int') # float64 to int
+        except:
+            return None
         # print(tracks)
         if tracks.shape[0] != 0:
             for xyxy, id, conf, cls in zip(xyxys, ids, confs, clss):

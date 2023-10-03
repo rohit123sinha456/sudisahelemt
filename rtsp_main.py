@@ -1,8 +1,6 @@
 from infer import Infer
 from api_post import API
 from rtsp import RTSP
-import cv2
-import time
 if __name__=="__main__":
     inferob = Infer()
     api = API()

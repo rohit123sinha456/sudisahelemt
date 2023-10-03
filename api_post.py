@@ -19,8 +19,8 @@ class API:
             try:
                 serverfilepath = x.json()['data']['fileName']
                 msgbody = {"dept_name": "Manufacturing",
-                           "camera": "Camera 1",
-                           "alarm_type": "Alarm",
+                           "camera": "Camera 10",
+                           "alarm_type": "Warning",
                            "image": serverfilepath}
                 x = requests.post(self.save_url, json=msgbody)
                 print(x.content)

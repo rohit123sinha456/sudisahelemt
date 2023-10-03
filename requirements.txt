@@ -73,6 +73,7 @@ typing_extensions==4.7.1
 tzdata==2023.3
 ultralytics==8.0.160
 urllib3==1.26.16
+uuid==1.30
 virtualenv==20.24.4
 wcwidth==0.2.6
 Werkzeug==2.3.7

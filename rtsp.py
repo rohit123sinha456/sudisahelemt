@@ -5,6 +5,7 @@ import numpy as np
 import os
 import queue 
 import threading
+import uuid
 
 
 class RTSP():
@@ -69,9 +70,8 @@ class RTSP():
                 if CorruptFrameStartTime is None:
                     CorruptFrameStartTime = time.time()
                 elif (time.time() - CorruptFrameStartTime) >= self.MaxCorruptFrameDuration:
-                    print("Corrupt frames received for over {} seconds. Retry (Retry {}/{})".format(MaxCorruptFrameDuration, Retry + 1, MaxRetries))
+                    print("Corrupt frames received")
                     break
-                
             # Enqueue the frame for saving
             try:
                 self.framequeue.put(Frame)
@@ -83,18 +83,18 @@ class RTSP():
             try:
                 Frame = self.framequeue.get()
                 if Frame is not None:
-                    print("Frame is OK")
                     dets = self.inferob.detection(Frame)
-                    print("Detection Frame")
                     frames = self.inferob.tracking(Frame,dets)
-                    print("tracking Frame")
-                    
+                    i = uuid.uuid4()
                     fnmae = "frame" + str(i) + '.jpg'
+                    frame_name = os.path.join('.', 'images', fnmae)
                     print("Frame processing Done")
                     
                     if(frames is not None):
-                        cv2.imwrite(fnmae,frames)
+                        cv2.imwrite(frame_name,frames)
                         self.api.posting(fnmae)
+                        print("Frame posting done")
+
             except:
                 print("Error in getting and running AI model")
 
