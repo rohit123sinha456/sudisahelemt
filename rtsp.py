@@ -27,7 +27,7 @@ class RTSP():
                 # Connect to the RTSP stream
                 self.cap = cv2.VideoCapture(self.rtsp_url)
                 ret, Frame = self.cap.read()
-                cv2.imwrite("hello.jpeg",Frame)
+                # cv2.imwrite("hello.jpeg",Frame)
                 print("In setup",ret)
                 if not ret:
                     print("No video feed available. Retrying in {} seconds (Retry {}/{})".format(self.retryinterval, Retry + 1, self.maxretries))
@@ -106,3 +106,7 @@ class RTSP():
         QueueThread.daemon = True
         QueueThread.start()
         DequeueThread.start()
+        while True:
+            print("Queue Thread Status :- ", QueueThread.is_alive())
+            print("Dequeue Thread Status :- ", DequeueThread.is_alive())
+            time.sleep(60)
