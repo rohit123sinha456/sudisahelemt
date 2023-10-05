@@ -19,7 +19,7 @@ class RTSP():
         self.framequeue = queue.Queue()
         self.MaxCorruptFrameDuration = 30
         self.cap = None
-        
+        logging.basicConfig(filename=os.path.join('.', 'logs', 'rtsp.log'),format='%(asctime)s:%(levelname)s: %(message)s')
     # def setup_connection(self):
         Retry = 0
         for Retry in range(self.maxretries):
@@ -28,19 +28,19 @@ class RTSP():
                 self.cap = cv2.VideoCapture(self.rtsp_url)
                 ret, Frame = self.cap.read()
                 # cv2.imwrite("hello.jpeg",Frame)
-                print("In setup",ret)
+                # print("In setup",ret)
                 if not ret:
-                    print("No video feed available. Retrying in {} seconds (Retry {}/{})".format(self.retryinterval, Retry + 1, self.maxretries))
+                    logging.info("No video feed available. Retrying in {} seconds (Retry {}/{})".format(self.retryinterval, Retry + 1, self.maxretries))
                 if not self.cap.isOpened():
-                    print("Failed to Open RTSP Stream. Retrying in {} seconds (Retry {}/{})".format(self.retryinterval, Retry + 1, self.maxretries))
+                    logging.info("Failed to Open RTSP Stream. Retrying in {} seconds (Retry {}/{})".format(self.retryinterval, Retry + 1, self.maxretries))
                     time.sleep(self.retryinterval)
                     continue
                 else:
-                    print("Connection Successfully Established")
+                    logging.info("Connection Successfully Established")
                     break
                 
             except Exception as e:
-                logging.exception(e)
+                logging.warning(e)
                 Retry += 1
                 time.sleep(self.retryinterval)
                 
@@ -60,10 +60,10 @@ class RTSP():
             try:
                 ret, Frame = self.cap.read()
             except:
-                print("Problem in reading Frames")
+                logging.warning("Problem in reading Frames")
                 
             if not ret:
-                print("No video feed available")
+                logging.warning("No video feed available")
                 break
                 
             # Handling Corrupt Frames
@@ -71,13 +71,13 @@ class RTSP():
                 if CorruptFrameStartTime is None:
                     CorruptFrameStartTime = time.time()
                 elif (time.time() - CorruptFrameStartTime) >= self.MaxCorruptFrameDuration:
-                    print("Corrupt frames received")
+                    logging.warning("Corrupt frames received")
                     break
             # Enqueue the frame for saving
             try:
                 self.framequeue.put(Frame)
             except:
-                print("Problem with pusing to queue")
+                logging.warning("Problem with pusing to queue")
             
     def dequeue_frame_buffer(self):
         while True:
@@ -89,15 +89,16 @@ class RTSP():
                     i = uuid.uuid4()
                     fnmae = "frame" + str(i) + '.jpg'
                     frame_name = os.path.join('.', 'images', fnmae)
-                    print("Frame processing Done")
+                    # print("Frame processing Done")
                     
                     if(frames is not None):
+                        print("Sending Image")
                         cv2.imwrite(frame_name,frames)
                         self.api.posting(fnmae,self.camera_config)
-                        print("Frame posting done")
+                        logging.info("Frame posting done")
 
             except:
-                print("Error in getting and running AI model")
+                logging.warning("Error in getting and running AI model")
 
     def run_threads(self):
         QueueThread = threading.Thread(target=self.enqueue_frame_buffer)
