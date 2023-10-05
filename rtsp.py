@@ -14,12 +14,15 @@ class RTSP():
         self.api = API
         self.camera_config = camera_config
         self.rtsp_url = camera_config['rtsp_url']
+        self.img_folder = camera_config['camera']
         self.maxretries = MaxRetries
         self.retryinterval = 30
         self.framequeue = queue.Queue()
         self.MaxCorruptFrameDuration = 30
         self.cap = None
         logging.basicConfig(filename=os.path.join('.', 'logs', 'rtsp.log'),format='%(asctime)s:%(levelname)s: %(message)s')
+        if not os.path.exists(self.img_folder):
+            os.makedirs(self.img_folder)
     # def setup_connection(self):
         Retry = 0
         for Retry in range(self.maxretries):
@@ -88,27 +91,27 @@ class RTSP():
                     frames = self.inferob.tracking(Frame,dets)
                     i = uuid.uuid4()
                     fnmae = "frame" + str(i) + '.jpg'
-                    frame_name = os.path.join('.', 'images', fnmae)
+                    frame_name = os.path.join('.', self.img_folder, fnmae)
                     # print("Frame processing Done")
                     
                     if(frames is not None):
                         logging.info("Sending Image")
                         cv2.imwrite(frame_name,frames)
-                        self.api.posting(fnmae,self.camera_config)
+                        self.api.posting(frame_name,self.camera_config)
                         logging.info("Frame posting done")
 
             except:
                 logging.warning("Error in getting and running AI model")
 
     def run_threads(self):
-        QueueThread = threading.Thread(target=self.enqueue_frame_buffer)
-        DequeueThread = threading.Thread(target=self.dequeue_frame_buffer)
-        DequeueThread.daemon = True
-        QueueThread.daemon = True
-        QueueThread.start()
-        DequeueThread.start()
-        print("Queue Thread Status :- ", QueueThread.is_alive())
-        print("Dequeue Thread Status :- ", DequeueThread.is_alive())
+        self.QueueThread = threading.Thread(target=self.enqueue_frame_buffer)
+        self.DequeueThread = threading.Thread(target=self.dequeue_frame_buffer)
+        self.DequeueThread.daemon = True
+        self.QueueThread.daemon = True
+        self.QueueThread.start()
+        self.DequeueThread.start()
+        # print("Queue Thread Status :- ", QueueThread.is_alive())
+        # print("Dequeue Thread Status :- ", DequeueThread.is_alive())
         # while True:
         #     print("Queue Thread Status :- ", QueueThread.is_alive())
         #     print("Dequeue Thread Status :- ", DequeueThread.is_alive())

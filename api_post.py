@@ -15,7 +15,7 @@ class API:
         imgencode = ""
         x = ""
         #logging.info("reading filename",filename)
-        filepath = os.path.join('.', self.image_folder, filename)
+        filepath = filename #os.path.join('.', self.image_folder, filename)
         with open(filepath, "rb") as img_file:
             x = requests.post(self.url, files= {"image": img_file})
             try:
