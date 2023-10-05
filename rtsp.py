@@ -92,7 +92,7 @@ class RTSP():
                     # print("Frame processing Done")
                     
                     if(frames is not None):
-                        print("Sending Image")
+                        logging.info("Sending Image")
                         cv2.imwrite(frame_name,frames)
                         self.api.posting(fnmae,self.camera_config)
                         logging.info("Frame posting done")

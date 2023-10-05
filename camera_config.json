@@ -5,6 +5,18 @@
             "camera": "Camera 10",
             "alarm_type": "Warning",
             "rtsp_url" : "rtsp://admin:Sheraton123@10.111.111.106:554/Streaming/Channels/501/"
+        },
+        {
+            "dept_name": "Manufacturing",
+            "camera": "Camera 15",
+            "alarm_type": "Warning",
+            "rtsp_url" : "rtsp://admin:Sheraton123@10.111.111.106:554/Streaming/Channels/301/"
+        },
+        {
+            "dept_name": "Manufacturing",
+            "camera": "Camera 15",
+            "alarm_type": "Warning",
+            "rtsp_url" : "rtsp://admin:Sheraton123@10.111.111.106:554/Streaming/Channels/201/"
         }
     ]
 }
