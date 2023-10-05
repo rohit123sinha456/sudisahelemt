@@ -7,7 +7,11 @@ if __name__=="__main__":
     api = API()
     f = open('camera_config.json')
     data = json.load(f)
+    rtsp_object_list = []
     for camera_config in data['cameras']:
         rtspob = RTSP(inferob,api,camera_config)
-        rtspob.run_threads()
+        rtsp_object_list.append(rtspob)
+        
+    for rtsp_object in rtsp_object_list:
+        rtsp_object.run_threads()
     

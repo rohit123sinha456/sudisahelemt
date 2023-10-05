@@ -107,7 +107,9 @@ class RTSP():
         QueueThread.daemon = True
         QueueThread.start()
         DequeueThread.start()
-        while True:
-            print("Queue Thread Status :- ", QueueThread.is_alive())
-            print("Dequeue Thread Status :- ", DequeueThread.is_alive())
-            time.sleep(60)
+        print("Queue Thread Status :- ", QueueThread.is_alive())
+        print("Dequeue Thread Status :- ", DequeueThread.is_alive())
+        # while True:
+        #     print("Queue Thread Status :- ", QueueThread.is_alive())
+        #     print("Dequeue Thread Status :- ", DequeueThread.is_alive())
+        #     time.sleep(60)
