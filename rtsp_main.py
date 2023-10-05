@@ -19,6 +19,10 @@ if __name__=="__main__":
     while True:
         for rtsp_object in rtsp_object_list:
             print("Queue Thread Status :- ", rtsp_object.QueueThread.is_alive())
+            if(rtsp_object.QueueThread.is_alive() == False):
+                rtsp_object.QueueThread.start()
             print("Dequeue Thread Status :- ", rtsp_object.DequeueThread.is_alive())
+            if(rtsp_object.DequeueThread.is_alive() == False):
+                rtsp_object.DequeueThread.start()
         time.sleep(60)
     
