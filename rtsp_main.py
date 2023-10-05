@@ -20,9 +20,19 @@ if __name__=="__main__":
         for rtsp_object in rtsp_object_list:
             print("Queue Thread Status :- ", rtsp_object.QueueThread.is_alive())
             if(rtsp_object.QueueThread.is_alive() == False):
-                rtsp_object.QueueThread.start()
+                rtsp_object.DequeueThread.join()
+                rtsp_object_list.remove(rtsp_object)
+                rtspob = RTSP(inferob,api,camera_config)
+                rtspob.run_threads()
+                rtsp_object_list.append(rtspob)
+
             print("Dequeue Thread Status :- ", rtsp_object.DequeueThread.is_alive())
             if(rtsp_object.DequeueThread.is_alive() == False):
-                rtsp_object.DequeueThread.start()
+                rtsp_object.QueueThread.join()
+                rtsp_object_list.remove(rtsp_object)
+                rtspob = RTSP(inferob,api,camera_config)
+                rtspob.run_threads()
+                rtsp_object_list.append(rtspob)
+                
         time.sleep(60)
     
