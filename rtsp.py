@@ -55,10 +55,10 @@ class RTSP():
 
 
 
-    def enqueue_frame_buffer(self):
+    def enqueue_frame_buffer(self,event):
         print("Reading and Enqueing Frames")
         print("Capture Status",self.cap.isOpened())
-        while True:
+        while not event.is_set():
             CorruptFrameStartTime = None
             try:
                 ret, Frame = self.cap.read()
@@ -82,8 +82,8 @@ class RTSP():
             except:
                 logging.warning("Problem with pusing to queue")
             
-    def dequeue_frame_buffer(self):
-        while True:
+    def dequeue_frame_buffer(self,event):
+        while not event.is_set():
             try:
                 Frame = self.framequeue.get()
                 if Frame is not None:
@@ -103,9 +103,9 @@ class RTSP():
             except:
                 logging.warning("Error in getting and running AI model")
 
-    def run_threads(self):
-        self.QueueThread = threading.Thread(target=self.enqueue_frame_buffer)
-        self.DequeueThread = threading.Thread(target=self.dequeue_frame_buffer)
+    def run_threads(self,event):
+        self.QueueThread = threading.Thread(target=self.enqueue_frame_buffer,args=(event,))
+        self.DequeueThread = threading.Thread(target=self.dequeue_frame_buffer,args=(event,))
         self.DequeueThread.daemon = True
         self.QueueThread.daemon = True
         self.QueueThread.start()
