@@ -29,10 +29,11 @@ if __name__=="__main__":
                 # rtsp_object_list.remove(rtsp_object)
                 print("Creating New object")
                 rtspob = RTSP(inferob,api,camera_config)
+                rtspobevent = Event()
                 print("Running Threads")
-                rtspob.run_threads()
+                rtspob.run_threads(rtspobevent)
                 print("appending object")
-                rtsp_object_list.append(rtspob)
+                rtsp_object_list.append([rtspob,rtspobevent])
 
             print("Dequeue Thread Status :- ", rtsp_object.DequeueThread.is_alive())
             if(rtsp_object.DequeueThread.is_alive() == False):
@@ -43,10 +44,11 @@ if __name__=="__main__":
                 # rtsp_object_list.remove(rtsp_object)
                 print("Creating New object")
                 rtspob = RTSP(inferob,api,camera_config)
+                rtspobevent = Event()
                 print("Running Threads")
-                rtspob.run_threads()
+                rtspob.run_threads(rtspobevent)
                 print("appending object")
-                rtsp_object_list.append(rtspob)
+                rtsp_object_list.append([rtspob,rtspobevent])
                 
         time.sleep(60)
     
