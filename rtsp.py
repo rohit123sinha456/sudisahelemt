@@ -28,7 +28,10 @@ class RTSP():
         for Retry in range(self.maxretries):
             try:
                 # Connect to the RTSP stream
-                self.cap = cv2.VideoCapture(self.rtsp_url)
+                try:
+                    self.cap = cv2.VideoCapture(self.rtsp_url)
+                except Exception as e:
+                    print("RTSP Server Error",e)
                 ret, Frame = self.cap.read()
                 # cv2.imwrite("hello.jpeg",Frame)
                 # print("In setup",ret)
