@@ -33,7 +33,7 @@ if __name__=="__main__":
                 print("Running Threads")
                 rtspob.run_threads(rtspobevent)
                 print("appending object")
-                rtsp_object_list.append([rtspob,rtspobevent])
+                rtsp_object_list.append([rtspob,rtspobevent,camera_config])
 
             print("Dequeue Thread Status :- ", rtsp_object.DequeueThread.is_alive())
             if(rtsp_object.DequeueThread.is_alive() == False):
