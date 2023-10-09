@@ -13,13 +13,13 @@ if __name__=="__main__":
     for camera_config in data['cameras']:
         rtspob = RTSP(inferob,api,camera_config)
         rtspobevent = Event()
-        rtsp_object_list.append([rtspob,rtspobevent])
+        rtsp_object_list.append([rtspob,rtspobevent,camera_config])
 
-    for rtsp_object,rtspobevent in rtsp_object_list:
+    for rtsp_object,rtspobevent,_ in rtsp_object_list:
         rtsp_object.run_threads(rtspobevent)
     
     while True:
-        for rtsp_object,rtspob_event in rtsp_object_list:
+        for rtsp_object,rtspob_event,camera_config in rtsp_object_list:
             print("Queue Thread Status :- ", rtsp_object.QueueThread.is_alive())
             if(rtsp_object.QueueThread.is_alive() == False):
                 print("killing Dequeue")
