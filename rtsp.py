@@ -28,13 +28,9 @@ class RTSP():
         for Retry in range(self.maxretries):
             try:
                 # Connect to the RTSP stream
-                try:
-                    self.cap = cv2.VideoCapture(self.rtsp_url)
-                except Exception as e:
-                    print("RTSP Server Error",e)
+                self.cap = cv2.VideoCapture(self.rtsp_url)
                 ret, Frame = self.cap.read()
-                # cv2.imwrite("hello.jpeg",Frame)
-                # print("In setup",ret)
+
                 if not ret:
                     logging.info("No video feed available. Retrying in {} seconds (Retry {}/{})".format(self.retryinterval, Retry + 1, self.maxretries))
                 if not self.cap.isOpened():
@@ -46,23 +42,16 @@ class RTSP():
                     break
                 
             except Exception as e:
-                logging.warning(e)
+                print("Exception whiole reading RTSP STream")
+                print(e)
                 Retry += 1
                 time.sleep(self.retryinterval)
                 
-    
-    def check_frame_corruption(self,Frame):
-        AveragePixelValue = np.mean(Frame)
-        CorruptThreshold = 10
-        return AveragePixelValue < CorruptThreshold
-
-
 
     def enqueue_frame_buffer(self,event):
         print("Reading and Enqueing Frames")
         print("Capture Status",self.cap.isOpened())
         while not event.is_set():
-            CorruptFrameStartTime = None
             try:
                 ret, Frame = self.cap.read()
             except:
@@ -72,23 +61,8 @@ class RTSP():
                 logging.warning("No video feed available")
                 break
                 
-            # Handling Corrupt Frames
-            if self.check_frame_corruption(Frame):
-                if CorruptFrameStartTime is None:
-                    CorruptFrameStartTime = time.time()
-                elif (time.time() - CorruptFrameStartTime) >= self.MaxCorruptFrameDuration:
-                    logging.warning("Corrupt frames received")
-                    break
             # Enqueue the frame for saving
             try:
-                self.framequeue.put(Frame)
-            except:
-                logging.warning("Problem with pusing to queue")
-            
-    def dequeue_frame_buffer(self,event):
-        while not event.is_set():
-            try:
-                Frame = self.framequeue.get()
                 if Frame is not None:
                     dets = self.inferob.detection(Frame)
                     frames = self.inferob.tracking(Frame,dets)
@@ -98,21 +72,56 @@ class RTSP():
                     # print("Frame processing Done")
                     
                     if(frames is not None):
+
+                        # cv2.imshow(self.camera_config['camera'],frames)
+                        # if cv2.waitKey(1) & 0xFF == ord('q'):
+                        #     cv2.destroyAllWindows()
+                        #     break
+
                         logging.info("Sending Image")
                         cv2.imwrite(frame_name,frames)
                         self.api.posting(frame_name,self.camera_config)
                         logging.info("Frame posting done")
 
-            except:
-                logging.warning("Error in getting and running AI model")
+                        
+            except Exception as e:
+                print("Problem with processing")
+                print(e)
+                logging.warning("Problem with processing")
+            
+    # def dequeue_frame_buffer(self,event):
+    #     while not event.is_set():
+    #         try:
+    #             Frame = self.framequeue.get()
+    #             if Frame is not None:
+    #                 dets = self.inferob.detection(Frame)
+    #                 frames = self.inferob.tracking(Frame,dets)
+    #                 i = uuid.uuid4()
+    #                 fnmae = "frame" + str(i) + '.jpg'
+    #                 frame_name = os.path.join('.', self.img_folder, fnmae)
+    #                 # print("Frame processing Done")
+                    
+    #                 cv2.imshow(self.camera_config['camera'],frames)
+    #                 if cv2.waitKey(1) & 0xFF == ord('q'):
+    #                     cv2.destroyAllWindows()
+    #                     break
+
+    #                 if(frames is not None):
+    #                     logging.info("Sending Image")
+    #                     cv2.imwrite(frame_name,frames)
+    #                     self.api.posting(frame_name,self.camera_config)
+    #                     logging.info("Frame posting done")
+
+    #         except:
+    #             logging.warning("Error in getting and running AI model")
 
     def run_threads(self,event):
         self.QueueThread = threading.Thread(target=self.enqueue_frame_buffer,args=(event,))
-        self.DequeueThread = threading.Thread(target=self.dequeue_frame_buffer,args=(event,))
-        self.DequeueThread.daemon = True
+        # self.DequeueThread = threading.Thread(target=self.dequeue_frame_buffer,args=(event,))
+        # self.DequeueThread.daemon = True
         self.QueueThread.daemon = True
         self.QueueThread.start()
-        self.DequeueThread.start()
+        # self.DequeueThread.start()
         # print("Queue Thread Status :- ", QueueThread.is_alive())
         # print("Dequeue Thread Status :- ", DequeueThread.is_alive())
         # while True:

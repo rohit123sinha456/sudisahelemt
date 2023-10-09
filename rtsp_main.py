@@ -20,11 +20,12 @@ if __name__=="__main__":
     
     while True:
         for rtsp_object,rtspob_event,camera_config in rtsp_object_list:
+            print(rtsp_object.framequeue.qsize())
             print("Queue Thread Status :- ", rtsp_object.QueueThread.is_alive())
             if(rtsp_object.QueueThread.is_alive() == False):
                 print("killing Dequeue")
                 rtspob_event.set()
-                rtsp_object.DequeueThread.join()
+                # rtsp_object.DequeueThread.join()
                 print("GC Object")
                 # rtsp_object_list.remove(rtsp_object)
                 print("Creating New object")
@@ -35,20 +36,20 @@ if __name__=="__main__":
                 print("appending object")
                 rtsp_object_list.append([rtspob,rtspobevent,camera_config])
 
-            print("Dequeue Thread Status :- ", rtsp_object.DequeueThread.is_alive())
-            if(rtsp_object.DequeueThread.is_alive() == False):
-                print("killing EnQueue")
-                rtspob_event.set()
-                rtsp_object.QueueThread.join()
-                print("GC Object")
-                # rtsp_object_list.remove(rtsp_object)
-                print("Creating New object")
-                rtspob = RTSP(inferob,api,camera_config)
-                rtspobevent = Event()
-                print("Running Threads")
-                rtspob.run_threads(rtspobevent)
-                print("appending object")
-                rtsp_object_list.append([rtspob,rtspobevent,camera_config])
-                
+            # print("Dequeue Thread Status :- ", rtsp_object.DequeueThread.is_alive())
+            # if(rtsp_object.DequeueThread.is_alive() == False):
+            #     print("killing EnQueue")
+            #     rtspob_event.set()
+            #     rtsp_object.QueueThread.join()
+            #     print("GC Object")
+            #     # rtsp_object_list.remove(rtsp_object)
+            #     print("Creating New object")
+            #     rtspob = RTSP(inferob,api,camera_config)
+            #     rtspobevent = Event()
+            #     print("Running Threads")
+            #     rtspob.run_threads(rtspobevent)
+            #     print("appending object")
+            #     rtsp_object_list.append([rtspob,rtspobevent,camera_config])
+            
         time.sleep(60)
     

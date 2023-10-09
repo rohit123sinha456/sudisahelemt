@@ -55,7 +55,8 @@ class Infer:
             ids = tracks[:, 4].astype('int') # float64 to int
             confs = tracks[:, 5]
             clss = tracks[:, 6].astype('int') # float64 to int
-        except:
+        except Exception as e:
+            # print(e)
             return None
         # print(tracks)
         if tracks.shape[0] != 0:
