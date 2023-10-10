@@ -34,15 +34,15 @@ if __name__=="__main__":
                 while retry <= 3:
                     try:
                         rtspob = FFMPEGC(inferob,api,camera_config)
+                        rtspobevent = Event()
+                        print("Running Threads")
+                        rtspob.run_threads(rtspobevent)
+                        print("appending object")
+                        rtsp_object_list.append([rtspob,rtspobevent,camera_config])
                         break
                     except:
                         retry+=1
                         time.sleep(15)
-                rtspobevent = Event()
-                print("Running Threads")
-                rtspob.run_threads(rtspobevent)
-                print("appending object")
-                rtsp_object_list.append([rtspob,rtspobevent,camera_config])
             
         time.sleep(60)
     
