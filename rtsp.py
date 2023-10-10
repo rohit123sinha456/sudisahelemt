@@ -88,32 +88,6 @@ class RTSP():
                 print("Problem with processing")
                 print(e)
                 logging.warning("Problem with processing")
-            
-    # def dequeue_frame_buffer(self,event):
-    #     while not event.is_set():
-    #         try:
-    #             Frame = self.framequeue.get()
-    #             if Frame is not None:
-    #                 dets = self.inferob.detection(Frame)
-    #                 frames = self.inferob.tracking(Frame,dets)
-    #                 i = uuid.uuid4()
-    #                 fnmae = "frame" + str(i) + '.jpg'
-    #                 frame_name = os.path.join('.', self.img_folder, fnmae)
-    #                 # print("Frame processing Done")
-                    
-    #                 cv2.imshow(self.camera_config['camera'],frames)
-    #                 if cv2.waitKey(1) & 0xFF == ord('q'):
-    #                     cv2.destroyAllWindows()
-    #                     break
-
-    #                 if(frames is not None):
-    #                     logging.info("Sending Image")
-    #                     cv2.imwrite(frame_name,frames)
-    #                     self.api.posting(frame_name,self.camera_config)
-    #                     logging.info("Frame posting done")
-
-    #         except:
-    #             logging.warning("Error in getting and running AI model")
 
     def run_threads(self,event):
         self.QueueThread = threading.Thread(target=self.enqueue_frame_buffer,args=(event,))

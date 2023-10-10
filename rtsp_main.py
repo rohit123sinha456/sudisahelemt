@@ -4,7 +4,9 @@ from rtsp import RTSP
 import json
 import time
 from threading import Event
+import os
 if __name__=="__main__":
+    os.environ["OPENCV_FFMPEG_CAPTURE_OPTIONS"] = "rtsp_transport;udp"
     inferob = Infer()
     api = API()
     f = open('camera_config.json')
